@@ -1,10 +1,10 @@
-const tipo_eventos = (sequelize, type) => {
-    return sequelize.define('tipo_eventos', {
+const usuarios_roles = (sequelize, type) => {
+    return sequelize.define('usuarios_roles', {
         id: {
             type: type.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-            comment: 'ID del tipo de evento'
+            comment: 'ID del usuario'
         },
         usuario_id: {
             type: type.INTEGER,
@@ -33,5 +33,5 @@ const tipo_eventos = (sequelize, type) => {
     });
   };
   
-  module.exports = tipo_eventos;
+  module.exports = usuarios_roles;
   
