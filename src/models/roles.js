@@ -1,3 +1,5 @@
+const { usuario } = require("../Database/dataBase.orm");
+
 const roles = (sequelize, type) => {
   return sequelize.define('Roles', {
       id: {
@@ -6,6 +8,15 @@ const roles = (sequelize, type) => {
           primaryKey: true,
           comment: 'ID del rol'
       },
+      usuario_id: {
+        type: type.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'usuarios',
+            key: 'id'
+        },
+        comment: 'ID del usuario relacionado'
+    },
       nombre: {
           type: type.STRING(50),
           allowNull: false,

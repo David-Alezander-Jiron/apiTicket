@@ -36,7 +36,7 @@ sequelize.sync({ force: false })
     });
 
 // Importar modelos
-const usuarioModel = require('../models/user.model');
+const usuarioModel = require('../models/usuarios.model');
 const paginaModel = require('../models/pagina');
 const participantesModel = require('../models/participantes');
 const patrocinadoresModel = require('../models/patrocinadores');
