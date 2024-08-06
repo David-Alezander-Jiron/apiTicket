@@ -57,86 +57,90 @@ const usuariosRolesModel = require('../models/usuarios_roles.model')
 const eventoModel = require('../models/evento'); // Asegúrate de que el archivo esté en la ruta correcta
 
 // Inicializar modelos
-const usuario = usuarioModel(sequelize, DataTypes);
-const pagina = paginaModel(sequelize, DataTypes);
+const usuarios = usuarioModel(sequelize, DataTypes);
+const paginas = paginaModel(sequelize, DataTypes);
 const participantes = participantesModel(sequelize, DataTypes);
 const patrocinadores = patrocinadoresModel(sequelize, DataTypes);
-const personal = personalModel(sequelize, DataTypes);
+const personals = personalModel(sequelize, DataTypes);
 const roles = rolesModel(sequelize, DataTypes);
 const tickets = ticketsModel(sequelize, DataTypes);
-const tipoEvento = tipoEventoModel(sequelize, DataTypes);
-const tipo = tipoModel(sequelize, DataTypes);
-const ubiPersonal = ubiPersonalModel(sequelize, DataTypes);
-const eventoLocacion = eventoLocacionModel(sequelize, DataTypes);
-const eventoParticipantes = eventoParticipantesModel(sequelize, DataTypes);
-const eventoPatrocinadores = eventoPatrocinadoresModel(sequelize, DataTypes);
-const eventoPersonal = eventoPersonalModel(sequelize, DataTypes);
-const eventoTickets = eventoTicketsModel(sequelize, DataTypes);
-const locacion = locacionModel(sequelize, DataTypes);
+const tipo_eventos = tipoEventoModel(sequelize, DataTypes);
+const tipos = tipoModel(sequelize, DataTypes);
+const ubi_personal = ubiPersonalModel(sequelize, DataTypes);
+const evento_locacion = eventoLocacionModel(sequelize, DataTypes);
+const evento_participantes = eventoParticipantesModel(sequelize, DataTypes);
+const evento_patrocinadores = eventoPatrocinadoresModel(sequelize, DataTypes);
+const evento_personal = eventoPersonalModel(sequelize, DataTypes);
+const evento_tickets = eventoTicketsModel(sequelize, DataTypes);
+const locaciones = locacionModel(sequelize, DataTypes);
 const servicios = servicioModel(sequelize,DataTypes);
-const usuariosRoles = usuariosRolesModel(sequelize, DataTypes);
-const evento = eventoModel(sequelize, DataTypes); // Asegúrate de que esto sea correcto
+const usuarios_roles = usuariosRolesModel(sequelize, DataTypes);
+const eventos = eventoModel(sequelize, DataTypes); // Asegúrate de que esto sea correcto
 
 // Definir relaciones
-locacion.belongsToMany(evento, { through: eventoLocacion, foreignKey: 'locacion_id' });
-evento.belongsToMany(locacion, { through: eventoLocacion, foreignKey: 'evento_id' });
+locaciones.belongsToMany(eventos, { through: evento_locacion, foreignKey: 'locacion_id' });
+eventos.belongsToMany(locaciones, { through: evento_locacion, foreignKey: 'evento_id' });
 
 
 
-participantes.belongsToMany(evento, { through: eventoParticipantes, foreignKey: 'participante_id' });
-evento.belongsToMany(participantes, { through: eventoParticipantes, foreignKey: 'evento_id' });
+participantes.belongsToMany(eventos, { through: evento_participantes, foreignKey: 'participante_id' });
+eventos.belongsToMany(participantes, { through: evento_participantes, foreignKey: 'evento_id' });
 
-patrocinadores.belongsToMany(evento, { through: eventoPatrocinadores, foreignKey: 'patrocinador_id' });
-evento.belongsToMany(patrocinadores, { through: eventoPatrocinadores, foreignKey: 'evento_id' });
+patrocinadores.belongsToMany(eventos, { through: evento_patrocinadores, foreignKey: 'patrocinador_id' });
+eventos.belongsToMany(patrocinadores, { through: evento_patrocinadores, foreignKey: 'evento_id' });
 
-personal.belongsToMany(evento, { through: eventoPersonal, foreignKey: 'personal_id' });
-evento.belongsToMany(personal, { through: eventoPersonal, foreignKey: 'evento_id' });
+personals.belongsToMany(eventos, { through: evento_personal, foreignKey: 'personal_id' });
+eventos.belongsToMany(personals, { through: evento_personal, foreignKey: 'evento_id' });
 
-tickets.belongsToMany(evento, { through: eventoTickets, foreignKey: 'ticket_id' });
-evento.belongsToMany(tickets, { through: eventoTickets, foreignKey: 'evento_id' });
+tickets.belongsToMany(eventos, { through: evento_tickets, foreignKey: 'ticket_id' });
+eventos.belongsToMany(tickets, { through: evento_tickets, foreignKey: 'evento_id' });
+
+// En tu archivo de configuración de modelos
+tipos.hasMany(tipo_eventos, { foreignKey: 'tipo_id' });
+tipo_eventos.belongsTo(tipos, { foreignKey: 'tipo_id' });
 
 
-personal.hasMany(ubiPersonal, { foreignKey: 'personal_id' }); 
-ubiPersonal.belongsTo(personal, { foreignKey: 'personal_id' });
+personals.hasMany(ubi_personal, { foreignKey: 'personal_id' }); 
+ubi_personal.belongsTo(personals, { foreignKey: 'personal_id' });
 
-evento.hasMany(eventoLocacion, { foreignKey: 'evento_id' });
-eventoLocacion.belongsTo(evento, { foreignKey: 'evento_id' });
+eventos.hasMany(evento_locacion, { foreignKey: 'evento_id' });
+evento_locacion.belongsTo(eventos, { foreignKey: 'evento_id' });
 
-evento.hasMany(eventoParticipantes, { foreignKey: 'evento_id' });
-eventoParticipantes.belongsTo(evento, { foreignKey: 'evento_id' });
+eventos.hasMany(evento_participantes, { foreignKey: 'evento_id' });
+evento_participantes.belongsTo(eventos, { foreignKey: 'evento_id' });
 
-evento.hasMany(eventoPatrocinadores, { foreignKey: 'evento_id' });
-eventoPatrocinadores.belongsTo(evento, { foreignKey: 'evento_id' });
+eventos.hasMany(evento_patrocinadores, { foreignKey: 'evento_id' });
+evento_patrocinadores.belongsTo(eventos, { foreignKey: 'evento_id' });
 
-evento.hasMany(eventoPersonal, { foreignKey: 'evento_id' });
-eventoPersonal.belongsTo(evento, { foreignKey: 'evento_id' });
+eventos.hasMany(evento_personal, { foreignKey: 'evento_id' });
+evento_personal.belongsTo(eventos, { foreignKey: 'evento_id' });
 
-evento.hasMany(eventoTickets, { foreignKey: 'evento_id' });
-eventoTickets.belongsTo(evento, { foreignKey: 'evento_id' });
+eventos.hasMany(evento_tickets, { foreignKey: 'evento_id' });
+evento_tickets.belongsTo(eventos, { foreignKey: 'evento_id' });
 
-pagina.belongsTo(evento, { foreignKey: 'evento_id' });
-evento.hasMany(pagina, { foreignKey: 'evento_id' });
+paginas.belongsTo(eventos, { foreignKey: 'evento_id' });
+eventos.hasMany(paginas, { foreignKey: 'evento_id' });
 
 module.exports = {
     sequelize,
     Sequelize,
-    usuariosRoles,
-    usuario,
+    usuarios_roles,
+    usuarios,
     servicios,
-    pagina,
+    paginas,
     participantes,
     patrocinadores,
-    personal,
+    personals,
     roles,
-    tipo,
+    tipos,
     tickets,
-    tipoEvento,
-    ubiPersonal,
-    eventoLocacion,
-    eventoParticipantes,
-    eventoPatrocinadores,
-    eventoPersonal,
-    eventoTickets,
-    locacion,
-    evento // Asegúrate de que esto esté exportado
+    tipo_eventos,
+    ubi_personal,
+    evento_locacion,
+    evento_participantes,
+    evento_patrocinadores,
+    evento_personal,
+    evento_tickets,
+    locaciones,
+    eventos // Asegúrate de que esto esté exportado
 };
