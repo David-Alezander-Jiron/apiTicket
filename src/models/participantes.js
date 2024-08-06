@@ -25,7 +25,16 @@ const participantes = (sequelize, type) => {
       telefono: {
           type: type.STRING(20),
           comment: 'Teléfono del participante'
-      }
+      },
+      usuario_id: {
+        type: type.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'usuarios',
+            key: 'id'
+        },
+        comment: 'ID del usuario relacionado'
+    }
   }, {
       timestamps: false,
       comment: 'Tabla de participantes'

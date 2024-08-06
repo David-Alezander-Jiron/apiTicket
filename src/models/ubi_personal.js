@@ -6,10 +6,14 @@ const ubiPersonal = (sequelize, type) => {
           primaryKey: true,
           comment: 'ID de la ubicación del personal'
       },
-      locacion_id: {
-          type: type.INTEGER,
-          allowNull: false,
-          comment: 'ID de la locación'
+      servicio_id: {
+        type: type.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'servicios',
+            key: 'id'
+        },
+        comment: 'ID del servicio relacionado'
       },
       personal_id: {
           type: type.INTEGER,

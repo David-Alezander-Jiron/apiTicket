@@ -18,7 +18,16 @@ const patrocinadores = (sequelize, type) => {
       contacto: {
           type: type.STRING(100),
           comment: 'Información de contacto'
-      }
+      },
+      usuario_id: {
+        type: type.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'usuarios',
+            key: 'id'
+        },
+        comment: 'ID del usuario relacionado'
+    }
   }, {
       timestamps: false,
       comment: 'Tabla de patrocinadores'

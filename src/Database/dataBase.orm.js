@@ -43,15 +43,17 @@ const patrocinadoresModel = require('../models/patrocinadores');
 const personalModel = require('../models/personal');
 const rolesModel = require('../models/roles');
 const ticketsModel = require('../models/tickets');
-const tipoEventoModel = require('../models/tipoevento');
+const tipoEventoModel = require('../models/tipo_evento.model');
 const ubiPersonalModel = require('../models/ubi_personal');
-const detallesModel = require('../models/detallesModel');
+const servicioModel = require('../models/servicios.model')
 const eventoLocacionModel = require('../models/evento_locacion');
 const eventoParticipantesModel = require('../models/evento_participantes');
 const eventoPatrocinadoresModel = require('../models/evento_patrocinadores');
 const eventoPersonalModel = require('../models/evento_personal');
 const eventoTicketsModel = require('../models/evento_tickets');
 const locacionModel = require('../models/locacion');
+const tipoModel = require('../models/tipo'); 
+const usuariosRolesModel = require('../models/usuarios_roles.model')
 const eventoModel = require('../models/evento'); // Asegúrate de que el archivo esté en la ruta correcta
 
 // Inicializar modelos
@@ -63,19 +65,23 @@ const personal = personalModel(sequelize, DataTypes);
 const roles = rolesModel(sequelize, DataTypes);
 const tickets = ticketsModel(sequelize, DataTypes);
 const tipoEvento = tipoEventoModel(sequelize, DataTypes);
+const tipo = tipoModel(sequelize, DataTypes);
 const ubiPersonal = ubiPersonalModel(sequelize, DataTypes);
-const detalles = detallesModel(sequelize, DataTypes);
 const eventoLocacion = eventoLocacionModel(sequelize, DataTypes);
 const eventoParticipantes = eventoParticipantesModel(sequelize, DataTypes);
 const eventoPatrocinadores = eventoPatrocinadoresModel(sequelize, DataTypes);
 const eventoPersonal = eventoPersonalModel(sequelize, DataTypes);
 const eventoTickets = eventoTicketsModel(sequelize, DataTypes);
 const locacion = locacionModel(sequelize, DataTypes);
+const servicios = servicioModel(sequelize,DataTypes);
+const usuariosRoles = usuariosRolesModel(sequelize, DataTypes);
 const evento = eventoModel(sequelize, DataTypes); // Asegúrate de que esto sea correcto
 
 // Definir relaciones
 locacion.belongsToMany(evento, { through: eventoLocacion, foreignKey: 'locacion_id' });
 evento.belongsToMany(locacion, { through: eventoLocacion, foreignKey: 'evento_id' });
+
+
 
 participantes.belongsToMany(evento, { through: eventoParticipantes, foreignKey: 'participante_id' });
 evento.belongsToMany(participantes, { through: eventoParticipantes, foreignKey: 'evento_id' });
@@ -89,11 +95,9 @@ evento.belongsToMany(personal, { through: eventoPersonal, foreignKey: 'evento_id
 tickets.belongsToMany(evento, { through: eventoTickets, foreignKey: 'ticket_id' });
 evento.belongsToMany(tickets, { through: eventoTickets, foreignKey: 'evento_id' });
 
-personal.hasMany(ubiPersonal, { foreignKey: 'personal_id' });
-ubiPersonal.belongsTo(personal, { foreignKey: 'personal_id' });
 
-detalles.belongsTo(evento, { foreignKey: 'evento_id' });
-evento.hasMany(detalles, { foreignKey: 'evento_id' });
+personal.hasMany(ubiPersonal, { foreignKey: 'personal_id' }); 
+ubiPersonal.belongsTo(personal, { foreignKey: 'personal_id' });
 
 evento.hasMany(eventoLocacion, { foreignKey: 'evento_id' });
 eventoLocacion.belongsTo(evento, { foreignKey: 'evento_id' });
@@ -116,16 +120,18 @@ evento.hasMany(pagina, { foreignKey: 'evento_id' });
 module.exports = {
     sequelize,
     Sequelize,
+    usuariosRoles,
     usuario,
+    servicios,
     pagina,
     participantes,
     patrocinadores,
     personal,
     roles,
+    tipo,
     tickets,
     tipoEvento,
     ubiPersonal,
-    detalles,
     eventoLocacion,
     eventoParticipantes,
     eventoPatrocinadores,
