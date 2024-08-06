@@ -26,6 +26,13 @@ require('./lib/passport');
 // Crear aplicación Express
 const app = express();
 
+app.use(cors({
+    origin: 'http://localhost:5173', // Asegúrate de que este sea el dominio correcto
+    credentials: true, // Permitir el envío de cookies y credenciales
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token']
+}));
+
 // Configurar helmet y Content Security Policy
 app.use(helmet({
     contentSecurityPolicy: {
@@ -65,7 +72,7 @@ app.use(session({
 }));
 
 // Configurar motor de vistas
-app.set('port', process.env.PORT || 4200);
+app.set('port', process.env.PORT || 9000);
 
 // Configurar middleware
 app.use(cookieParser());
@@ -80,8 +87,6 @@ app.use(passport.session());
 // Middleware de seguridad y rendimiento
 app.use(helmet.referrerPolicy({ policy: 'strict-origin-when-cross-origin' }));
 app.use(compression());
-
-
 
 // Middleware para minificar HTML
 app.use(async (req, res, next) => {
@@ -104,6 +109,31 @@ app.use(async (req, res, next) => {
     next();
 });
 
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5, // Limitar a 5 intentos de inicio de sesión por ventana por IP
+    message: 'Demasiados intentos de inicio de sesión desde esta IP, por favor intente nuevamente después de 15 minutos.'
+});
+app.use('/rutaLogin', loginLimiter);
+
+// Middleware de manejo de errores
+app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    if (err.name === 'ValidationError') {
+        return res.status(400).json({ error: 'Datos inválidos.' });
+    }
+
+    if (err.code === 'EBADCSRFTOKEN') {
+        res.status(403).send('La validación del token CSRF ha fallado. Por favor, recarga la página.');
+    } else {
+        console.error(err.stack);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
 // Configurar variables globales
 app.use((req, res, next) => {
     app.locals.message = req.flash('message');
@@ -112,10 +142,29 @@ app.use((req, res, next) => {
     next();
 });
 
-// Configurar CORS
-app.use(cors());
+// Middleware de protección CSRF
+/* const csrfMiddleware = csrf({ cookie: true });
+app.use(cookieParser());
+app.use(csrfMiddleware);
 
-// Configurar logging
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
+app.use((err, req, res, next) => {
+    if (err.code !== 'EBADCSRFTOKEN') return next(err);
+
+    // Manejo del error CSRF aquí
+    res.status(403);
+    res.send('La validación del token CSRF ha fallado. Por favor, recarga la página.');
+}); */
+
+// Configurar archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/src/public', express.static(path.join(__dirname, 'src/public')));
+
+// Configurar sistema de logging
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
@@ -130,48 +179,11 @@ if (process.env.NODE_ENV !== 'production') {
         format: winston.format.simple()
     }));
 }
+
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
-// Importar y usar las rutas
-const eventosRouter = require('./router/eventos.router');
-const ubicacionRouter = require('./router/ubicacion.router');
-const tipoEventoRouter = require('./router/tipoEvento.router');
-const personalRouter = require('./router/personal.router');
-const rolesRouter = require('./router/roles.router');
-const ticketsRouter = require('./router/ticket.router');
-const detallesEventosRouter = require('./router/detallesEvent.router');
-const eventoLocacionRouter = require('./router/eventoLoca.router');
-const eventoParticipantesRouter = require('./router/eventoPartici.router');
-const eventoPatrocinadoresRouter = require('./router/eventoPatroci.router');
-const eventoPersonalRouter = require('./router/eventoPersonal.router');
-const eventoTicketsRouter = require('./router/eventoTicket.router');
-const paginaRouter = require('./router/pagina.router');
+// Rutas - Definir tus rutas aquí
 
-// Rutas de la aplicación
-app.use('/eventos', eventosRouter);
-app.use('/ubicacion', ubicacionRouter);
-app.use('/tipoEvento', tipoEventoRouter);
-app.use('/personal', personalRouter);
-app.use('/roles', rolesRouter);
-app.use('/tickets', ticketsRouter);
-app.use('/detallesEventos', detallesEventosRouter);
-app.use('/eventoLocacion', eventoLocacionRouter);
-app.use('/eventoParticipantes', eventoParticipantesRouter);
-app.use('/eventoPatrocinadores', eventoPatrocinadoresRouter);
-app.use('/eventoPersonal', eventoPersonalRouter);
-app.use('/eventoTickets', eventoTicketsRouter);
-app.use('/pagina', paginaRouter);
+app.use(require('./router/usuarios.router'));
 
-// Middleware de manejo de errores
-app.use((err, req, res, next) => {
-  if (err.name === 'SequelizeValidationError') {
-    return res.status(400).json({ message: err.message, errors: err.errors });
-  }
-  if (err.name === 'SequelizeDatabaseError') {
-    return res.status(500).json({ message: err.message, errors: err.errors });
-  }
-  next(err);
-});
-
-// Exportar la aplicación
 module.exports = app;
