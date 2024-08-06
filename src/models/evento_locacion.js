@@ -1,5 +1,5 @@
-const eventoLocacion = (sequelize, type) => {
-  return sequelize.define('EventoLocacion', {
+const evento_locaciones = (sequelize, type) => {
+  return sequelize.define('evento_locaciones', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,
@@ -22,4 +22,4 @@ const eventoLocacion = (sequelize, type) => {
   });
 };
 
-module.exports = eventoLocacion;
+module.exports = evento_locaciones;

@@ -1,5 +1,5 @@
-const pagina = (sequelize, type) => {
-  return sequelize.define('Pagina', {
+const paginas = (sequelize, type) => {
+  return sequelize.define('paginas', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,
@@ -43,4 +43,4 @@ const pagina = (sequelize, type) => {
   });
 };
 
-module.exports = pagina;
+module.exports = paginas;

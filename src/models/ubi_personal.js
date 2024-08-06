@@ -1,5 +1,5 @@
-const ubiPersonal = (sequelize, type) => {
-  return sequelize.define('UbiPersonal', {
+const ubi_personals = (sequelize, type) => {
+  return sequelize.define('ubi_personals', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,
@@ -26,4 +26,4 @@ const ubiPersonal = (sequelize, type) => {
   });
 };
 
-module.exports = ubiPersonal;
+module.exports = ubi_personals;

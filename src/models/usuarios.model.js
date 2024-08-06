@@ -54,4 +54,4 @@ const usuarios = (sequelize, type) => {
   };
   
   module.exports = usuarios;
-  
+   

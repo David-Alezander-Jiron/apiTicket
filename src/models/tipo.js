@@ -1,5 +1,5 @@
-const tipo = (sequelize, type) => {
-  return sequelize.define('TipoEvento', {
+const tipos = (sequelize, type) => {
+  return sequelize.define('tipos', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,
@@ -27,4 +27,4 @@ const tipo = (sequelize, type) => {
   });
 };
 
-module.exports = tipo;
+module.exports = tipos;

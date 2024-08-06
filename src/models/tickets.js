@@ -1,5 +1,5 @@
 const tickets = (sequelize, type) => {
-  return sequelize.define('Tickets', {
+  return sequelize.define('tickets', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,

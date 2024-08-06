@@ -1,5 +1,5 @@
-const eventoPersonal = (sequelize, type) => {
-  return sequelize.define('EventoPersonal', {
+const eventos_personals = (sequelize, type) => {
+  return sequelize.define('eventos_personals', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,
@@ -22,4 +22,4 @@ const eventoPersonal = (sequelize, type) => {
   });
 };
 
-module.exports = eventoPersonal;
+module.exports = eventos_personals;

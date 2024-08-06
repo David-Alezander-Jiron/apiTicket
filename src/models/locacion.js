@@ -1,25 +1,22 @@
-// models/locacion.js
-const { DataTypes } = require('sequelize');
-
-module.exports = (sequelize) => {
-  return sequelize.define('Locacion', {
+const locaciones = (sequelize, type) => {
+  return sequelize.define('locaciones', {
     id: {
-      type: DataTypes.INTEGER,
+      type: type.INTEGER,
       autoIncrement: true,
       primaryKey: true,
       comment: 'ID de la locación'
     },
     nombre: {
-      type: DataTypes.STRING(100),
+      type: type.STRING(100),
       allowNull: false,
       comment: 'Nombre de la locación'
     },
     direccion: {
-      type: DataTypes.STRING(100),
+      type: type.STRING(100),
       comment: 'Dirección de la locación'
     },
     capacidad: {
-      type: DataTypes.INTEGER,
+      type: type.INTEGER,
       comment: 'Capacidad de la locación'
     }
   }, {
@@ -27,3 +24,5 @@ module.exports = (sequelize) => {
     comment: 'Tabla de locaciones'
   });
 };
+
+module.exports = locaciones;

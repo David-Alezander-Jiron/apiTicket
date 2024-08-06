@@ -1,7 +1,5 @@
-const { usuario } = require("../Database/dataBase.orm");
-
 const roles = (sequelize, type) => {
-  return sequelize.define('Roles', {
+  return sequelize.define('roles', {
       id: {
           type: type.INTEGER,
           autoIncrement: true,
