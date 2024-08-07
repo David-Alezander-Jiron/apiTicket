@@ -6,6 +6,12 @@ const ubi_personals = (sequelize, type) => {
           primaryKey: true,
           comment: 'ID de la ubicación del personal'
       },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       servicio_id: {
         type: type.INTEGER,
         allowNull: false,
