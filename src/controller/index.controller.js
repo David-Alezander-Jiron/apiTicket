@@ -44,8 +44,8 @@ indexCtl.registro = (req, res, next) => {
                 console.error('Error al iniciar sesión después del registro:', err);
                 return next(err);
             }
-            return res.json({ message: 'Registro exitoso', redirect: '/' });
-        });
+            return res.json({ message: 'Registro exitoso', redirect: '/login' });
+        }); 
     })(req, res, next);
 };
 
@@ -62,7 +62,7 @@ indexCtl.login = (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            return res.json({ message: 'Inicio de sesión exitoso', redirect: '/page/add/' + req.user.id });
+            return res.json({ message: 'Inicio de sesión exitoso', redirect: '/' });
         });
     })(req, res, next);
 };
