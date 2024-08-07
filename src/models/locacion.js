@@ -18,7 +18,13 @@ const locaciones = (sequelize, type) => {
     capacidad: {
       type: type.INTEGER,
       comment: 'Capacidad de la locación'
-    }
+    },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
   }, {
     timestamps: false,
     comment: 'Tabla de locaciones'
