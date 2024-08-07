@@ -19,6 +19,12 @@ const patrocinadores = (sequelize, type) => {
           type: type.STRING(100),
           comment: 'Información de contacto'
       },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       usuario_id: {
         type: type.INTEGER,
         allowNull: false,
