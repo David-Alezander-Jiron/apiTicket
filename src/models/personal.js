@@ -23,7 +23,14 @@ const personals = (sequelize, type) => {
       telefono: {
           type: type.STRING(20),
           comment: 'Teléfono del personal'
-      },usuario_id: {
+      },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
+      usuario_id: {
         type: type.INTEGER,
         allowNull: false,
         references: {
