@@ -45,7 +45,7 @@ const rolesModel = require('../models/roles');
 const ticketsModel = require('../models/tickets');
 const tipoEventoModel = require('../models/tipo_evento.model');
 const ubiPersonalModel = require('../models/ubi_personal');
-const servicioModel = require('../models/servicios.model')
+const servicioModel = require('../models/servicios.model');
 const eventoLocacionModel = require('../models/evento_locacion');
 const eventoParticipantesModel = require('../models/evento_participantes');
 const eventoPatrocinadoresModel = require('../models/evento_patrocinadores');
@@ -53,8 +53,8 @@ const eventoPersonalModel = require('../models/evento_personal');
 const eventoTicketsModel = require('../models/evento_tickets');
 const locacionModel = require('../models/locacion');
 const tipoModel = require('../models/tipo'); 
-const usuariosRolesModel = require('../models/usuarios_roles.model')
-const eventoModel = require('../models/evento'); // Asegúrate de que el archivo esté en la ruta correcta
+const usuariosRolesModel = require('../models/usuarios_roles.model');
+const eventoModel = require('../models/evento');
 
 // Inicializar modelos
 const usuarios = usuarioModel(sequelize, DataTypes);
@@ -73,15 +73,13 @@ const evento_patrocinadores = eventoPatrocinadoresModel(sequelize, DataTypes);
 const evento_personal = eventoPersonalModel(sequelize, DataTypes);
 const evento_tickets = eventoTicketsModel(sequelize, DataTypes);
 const locaciones = locacionModel(sequelize, DataTypes);
-const servicios = servicioModel(sequelize,DataTypes);
+const servicios = servicioModel(sequelize, DataTypes);
 const usuarios_roles = usuariosRolesModel(sequelize, DataTypes);
-const eventos = eventoModel(sequelize, DataTypes); // Asegúrate de que esto sea correcto
+const eventos = eventoModel(sequelize, DataTypes);
 
 // Definir relaciones
 locaciones.belongsToMany(eventos, { through: evento_locacion, foreignKey: 'locacion_id' });
 eventos.belongsToMany(locaciones, { through: evento_locacion, foreignKey: 'evento_id' });
-
-
 
 participantes.belongsToMany(eventos, { through: evento_participantes, foreignKey: 'participante_id' });
 eventos.belongsToMany(participantes, { through: evento_participantes, foreignKey: 'evento_id' });
@@ -95,12 +93,10 @@ eventos.belongsToMany(personals, { through: evento_personal, foreignKey: 'evento
 tickets.belongsToMany(eventos, { through: evento_tickets, foreignKey: 'ticket_id' });
 eventos.belongsToMany(tickets, { through: evento_tickets, foreignKey: 'evento_id' });
 
-// En tu archivo de configuración de modelos
 tipos.hasMany(tipo_eventos, { foreignKey: 'tipo_id' });
 tipo_eventos.belongsTo(tipos, { foreignKey: 'tipo_id' });
 
-
-personals.hasMany(ubi_personal, { foreignKey: 'personal_id' }); 
+personals.hasMany(ubi_personal, { foreignKey: 'personal_id' });
 ubi_personal.belongsTo(personals, { foreignKey: 'personal_id' });
 
 eventos.hasMany(evento_locacion, { foreignKey: 'evento_id' });
@@ -142,5 +138,5 @@ module.exports = {
     evento_personal,
     evento_tickets,
     locaciones,
-    eventos // Asegúrate de que esto esté exportado
+    eventos
 };
