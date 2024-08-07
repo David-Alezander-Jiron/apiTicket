@@ -26,6 +26,12 @@ const eventos = (sequelize, type) => {
             allowNull: true,
             comment: 'Ubicación del evento'
         },
+        estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
         organizador_id: {
             type: type.INTEGER,
             allowNull: false,
