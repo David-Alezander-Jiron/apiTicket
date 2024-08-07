@@ -26,6 +26,12 @@ const participantes = (sequelize, type) => {
           type: type.STRING(20),
           comment: 'Teléfono del participante'
       },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       usuario_id: {
         type: type.INTEGER,
         allowNull: false,
