@@ -15,6 +15,12 @@ const tipos = (sequelize, type) => {
         },
         comment: 'ID del usuario relacionado'
     },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       nombre: {
           type: type.STRING(50),
           allowNull: false,
