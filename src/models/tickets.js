@@ -18,9 +18,11 @@ const tickets = (sequelize, type) => {
           comment: 'Precio del ticket'
       },
       estado: {
-          type: type.STRING(20),
-          comment: 'Estado del ticket'
-      },
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       participante_id: {
           type: type.INTEGER,
           allowNull: false,
