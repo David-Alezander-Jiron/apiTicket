@@ -6,6 +6,12 @@ const usuarios_roles = (sequelize, type) => {
             primaryKey: true,
             comment: 'ID del usuario'
         },
+        estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
         usuario_id: {
             type: type.INTEGER,
             allowNull: false,
