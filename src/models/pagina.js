@@ -23,6 +23,12 @@ const paginas = (sequelize, type) => {
           type: type.STRING(50),
           comment: 'Horario de atención'
       },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       evento_id: {
           type: type.INTEGER,
           allowNull: false,
