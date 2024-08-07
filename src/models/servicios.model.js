@@ -20,6 +20,12 @@ const servicios = (sequelize, type) => {
             allowNull: false,
             comment: 'Nombre del servicio'
         },
+        estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
         
     }, {
         timestamps: false,
