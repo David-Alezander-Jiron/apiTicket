@@ -6,6 +6,12 @@ const evento_locaciones = (sequelize, type) => {
           primaryKey: true,
           comment: 'ID de la relación evento-locación'
       },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       evento_id: {
           type: type.INTEGER,
           allowNull: false,
