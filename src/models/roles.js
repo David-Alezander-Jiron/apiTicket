@@ -20,6 +20,12 @@ const roles = (sequelize, type) => {
           allowNull: false,
           comment: 'Nombre del rol'
       },
+    estado: {
+            type: type.ENUM('activo','inactivo', 'eliminado'),
+            allowNull: false,
+            defaultValue: 'activo',
+            comment: 'Estado del usuario'
+        },
       descripcion: {
           type: type.TEXT,
           comment: 'Descripción del rol'
