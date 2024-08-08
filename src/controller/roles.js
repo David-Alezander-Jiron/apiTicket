@@ -1,11 +1,12 @@
-const rolesCtl = {};
-const { Roles } = require('../Database/dataBase.sql');
+const { roles } = require('../Database/dataBase.orm'); // Ajusta la ruta según sea necesario
+
+const rolCtl = {};
 
 // Mostrar todos los roles
-rolesCtl.mostrar = async (req, res) => {
+rolCtl.mostrar = async (req, res) => {
   try {
-    const roles = await Roles.findAll();
-    res.status(200).json(roles);
+    const listaRoles = await roles.findAll();
+    res.status(200).json(listaRoles);
   } catch (error) {
     console.error("Error al obtener los roles:", error);
     res.status(500).send("Hubo un error al obtener los roles");
@@ -13,11 +14,11 @@ rolesCtl.mostrar = async (req, res) => {
 };
 
 // Crear un nuevo rol
-rolesCtl.mandar = async (req, res) => {
-  const { nombre } = req.body;
+rolCtl.mandar = async (req, res) => {
+  const { nombre, estado, descripcion } = req.body;
 
   try {
-    await Roles.create({ nombre });
+    await roles.create({ nombre, estado, descripcion });
     res.status(200).send("Rol creado con éxito");
   } catch (error) {
     console.error("Error al crear el rol:", error);
@@ -26,11 +27,13 @@ rolesCtl.mandar = async (req, res) => {
 };
 
 // Obtener un rol por ID
-rolesCtl.obtenerPorId = async (req, res) => {
+rolCtl.obtenerPorId = async (req, res) => {
   const { id } = req.params;
 
+  console.log("ID recibido:", id); // Añadir este log para verificar el ID recibido
+
   try {
-    const rol = await Roles.findByPk(id);
+    const rol = await roles.findByPk(id);
 
     if (!rol) {
       return res.status(404).json({ message: 'Rol no encontrado' });
@@ -43,11 +46,11 @@ rolesCtl.obtenerPorId = async (req, res) => {
 };
 
 // Eliminar un rol por ID
-rolesCtl.eliminar = async (req, res) => {
+rolCtl.eliminar = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Roles.destroy({ where: { id } });
+    const result = await roles.destroy({ where: { id } });
 
     if (result) {
       res.status(200).send("Rol eliminado con éxito");
@@ -61,13 +64,13 @@ rolesCtl.eliminar = async (req, res) => {
 };
 
 // Actualizar un rol por ID
-rolesCtl.actualizar = async (req, res) => {
+rolCtl.actualizar = async (req, res) => {
   const { id } = req.params;
-  const { nombre } = req.body;
+  const { nombre, estado, descripcion } = req.body;
 
   try {
-    const result = await Roles.update(
-      { nombre },
+    const result = await roles.update(
+      { nombre, estado, descripcion },
       { where: { id } }
     );
 
@@ -82,4 +85,5 @@ rolesCtl.actualizar = async (req, res) => {
   }
 };
 
-module.exports = rolesCtl;
+module.exports = rolCtl;
+
