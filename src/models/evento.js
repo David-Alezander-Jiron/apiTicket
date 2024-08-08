@@ -27,10 +27,10 @@ const eventos = (sequelize, type) => {
             comment: 'Ubicación del evento'
         },
         estado: {
-            type: type.ENUM('activo','inactivo', 'eliminado'),
+            type: type.ENUM('activo', 'inactivo', 'eliminado'),
             allowNull: false,
             defaultValue: 'activo',
-            comment: 'Estado del evento'
+            comment: 'Estado del usuario'
         },
         organizador_id: {
             type: type.INTEGER,
@@ -41,7 +41,7 @@ const eventos = (sequelize, type) => {
             type: type.TEXT,
             allowNull: true,
             comment: 'Descripción del evento'
-        },
+        }, 
     }, {
         timestamps: false,
         comment: 'Tabla de eventos'

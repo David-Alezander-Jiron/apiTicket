@@ -17,7 +17,7 @@ if (MYSQL_URI) {
             idle: 10000
         }
     });
-}
+} 
 
 sequelize.authenticate()
     .then(() => {
