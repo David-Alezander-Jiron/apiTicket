@@ -34,15 +34,6 @@ const paginas = (sequelize, type) => {
           allowNull: false,
           comment: 'ID del evento asociado'
       },
-      usuario_id: {
-        type: type.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'usuarios',
-            key: 'id'
-        },
-        comment: 'ID del usuario relacionado'
-    }
   }, {
       timestamps: false,
       comment: 'Tabla de páginas'
