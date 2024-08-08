@@ -18,6 +18,7 @@ const { minify } = require('html-minifier-terser');
 const winston = require('winston');
 const cors = require('cors');
 const eventosRouter = require('./router/eventos.router');
+const personalRouter = require('./router/personal.router');
 
 const { Loader } = require('@googlemaps/js-api-loader')
 
@@ -188,6 +189,7 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 app.use(require('./router/index.router'));
 app.use(require('./router/usuarios.router'))
 app.use('/eventos', eventosRouter);
+app.use('/personal', personalRouter);
 
 // Exportar la aplicación
 module.exports = app;
