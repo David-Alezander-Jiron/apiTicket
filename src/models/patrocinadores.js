@@ -26,7 +26,7 @@ const patrocinadores = (sequelize, type) => {
             comment: 'Estado del usuario'
         },
     
-  {
+  
       timestamps: false,
       comment: 'Tabla de patrocinadores'
   });

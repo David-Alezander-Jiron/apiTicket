@@ -31,7 +31,7 @@ const personals = (sequelize, type) => {
             comment: 'Estado del usuario'
         },
 
-  {
+  
       timestamps: false,
       comment: 'Tabla de personal'
   });
