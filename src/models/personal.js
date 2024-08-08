@@ -30,8 +30,7 @@ const personals = (sequelize, type) => {
             defaultValue: 'activo',
             comment: 'Estado del usuario'
         },
-
-  
+  }, {
       timestamps: false,
       comment: 'Tabla de personal'
   });
