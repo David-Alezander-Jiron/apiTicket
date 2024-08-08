@@ -6,15 +6,7 @@ const tipos = (sequelize, type) => {
           primaryKey: true,
           comment: 'ID del tipo de evento'
       },
-      usuario_id: {
-        type: type.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'usuarios',
-            key: 'id'
-        },
-        comment: 'ID del usuario relacionado'
-    },
+      
     estado: {
             type: type.ENUM('activo','inactivo', 'eliminado'),
             allowNull: false,
