@@ -1,12 +1,12 @@
 // controller/personal.js
 const personalCtl = {};
-const { Personal } = require('../Database/dataBase.sql');
+const { personals } = require('../Database/dataBase.orm');
 
 // Mostrar todo el personal
 personalCtl.mostrar = async (req, res) => {
   try {
-    const personal = await Personal.findAll();
-    res.status(200).json(personal);
+    const listaPersonal = await personals.findAll();
+    res.status(200).json(listaPersonal);
   } catch (error) {
     console.error("Error al obtener el personal:", error);
     res.status(500).send("Hubo un error al obtener el personal");
@@ -15,10 +15,10 @@ personalCtl.mostrar = async (req, res) => {
 
 // Crear un nuevo personal
 personalCtl.mandar = async (req, res) => {
-  const { nombre, email } = req.body;
+  const { nombre, apellido, email } = req.body;
 
   try {
-    await Personal.create({ nombre, email });
+    await personals.create({ nombre, apellido, email });
     res.status(200).send("Personal creado con éxito");
   } catch (error) {
     console.error("Error al crear el personal:", error);
@@ -31,7 +31,7 @@ personalCtl.obtenerPorId = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const personal = await Personal.findByPk(id);
+    const personal = await personal.findByPk(id);
 
     if (!personal) {
       return res.status(404).json({ message: 'Personal no encontrado' });
@@ -48,7 +48,7 @@ personalCtl.eliminar = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Personal.destroy({ where: { id } });
+    const result = await personals.destroy({ where: { id } });
 
     if (result) {
       res.status(200).send("Personal eliminado con éxito");
@@ -67,7 +67,7 @@ personalCtl.actualizar = async (req, res) => {
   const { nombre, email } = req.body;
 
   try {
-    const result = await Personal.update(
+    const result = await personals.update(
       { nombre, email },
       { where: { id } }
     );
