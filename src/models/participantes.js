@@ -33,7 +33,7 @@ const participantes = (sequelize, type) => {
             comment: 'Estado del usuario'
         },
       
-  }, {
+   {
       timestamps: false,
       comment: 'Tabla de participantes'
   });
