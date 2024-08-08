@@ -18,10 +18,12 @@ const personals = (sequelize, type) => {
       },
       rol: {
           type: type.STRING(50),
+          allowNull: true,
           comment: 'Rol del personal'
       },
       telefono: {
           type: type.STRING(20),
+          allowNull: true,
           comment: 'Teléfono del personal'
       },
     estado: {
@@ -30,15 +32,6 @@ const personals = (sequelize, type) => {
             defaultValue: 'activo',
             comment: 'Estado del usuario'
         },
-      usuario_id: {
-        type: type.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'usuarios',
-            key: 'id'
-        },
-        comment: 'ID del usuario relacionado'
-    }
   }, {
       timestamps: false,
       comment: 'Tabla de personal'
