@@ -7,7 +7,7 @@ const roles = (sequelize, type) => {
           comment: 'ID del rol'
       },
       
-    
+     
       nombre: {
           type: type.STRING(50),
           allowNull: false,

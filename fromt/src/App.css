@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow-x: hidden; /* Evita el desplazamiento horizontal */
+}
+  
+  .navbar {
+    background-color: #ffffff;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar li {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar input[type="text"] {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    width: 200px;
+    margin-right: 10px;
+  }
+  
+  .navbar button {
+    padding: 8px 12px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+  
+  .navbar i {
+    font-size: 20px;
+    color: #333;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .sidebar li {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #fff;
+  }
+  
+  .sidebar a:hover {
+    background-color: #555;
+  }
+  
+  .main-content {
+    margin-left: 200px;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #000;
+  }
+  
+  .header i {
+    font-size: 24px;
+    margin-right: 10px;
+  }
+  
+  .dashboard-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .dashboard-card {
+    width: 25%;
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .card-1 {
+    background-color: #00ACAC;
+  }
+  
+  .card-2 {
+    background-color: #348FE2;
+  }
+  
+  .card-3 {
+    background-color: #8753DE;
+  }
+  
+  .card-4 {
+    background-color: #20252A;
+    color: #fff;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  

@@ -190,6 +190,7 @@ app.use(require('./router/index.router'));
 app.use(require('./router/usuarios.router'))
 app.use('/eventos', eventosRouter);
 app.use('/personal', personalRouter);
+app.use(require('./router/roles.router'));
 
 // Exportar la aplicación
 module.exports = app;

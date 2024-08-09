@@ -7,7 +7,7 @@ const personals = (sequelize, type) => {
         comment: 'ID del personal'
       },
       nombre: {
-        type: type.STRING,
+        type: type.STRING, 
         allowNull: false,
         comment: 'Nombre del personal'
       },
