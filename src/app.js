@@ -121,7 +121,7 @@ const loginLimiter = rateLimit({
 app.use('/rutaLogin', loginLimiter);
 
 // Middleware de manejo de errores
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => { 
     if (res.headersSent) {
         return next(err);
     }
@@ -191,6 +191,7 @@ app.use(require('./router/usuarios.router'))
 app.use(require('./router/eventos.router'))
 app.use('/personal', personalRouter);
 app.use(require('./router/roles.router'));
+app.use(require('./router/patrocinadores.router'))
 
 // Exportar la aplicación
 module.exports = app;

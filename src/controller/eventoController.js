@@ -1,10 +1,11 @@
 const { eventos } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
+
 // Controlador de eventos
 const eventosCtl = {};
 
 // Crear un nuevo evento
 eventosCtl.crearEvento = async (req, res, next) => {
-  const { nombre, fecha, capacidad_personas, ubicacion, descripcion, tipo_evento, organizador_id, estado } = req.body;
+  const { nombre, fecha, capacidad_personas, ubicacion, descripcion, tipo_evento, patrocinador_id, estado } = req.body;
 
   try {
     // Verificar si el evento ya existe
@@ -27,7 +28,7 @@ eventosCtl.crearEvento = async (req, res, next) => {
       ubicacion,
       descripcion,
       tipo_evento,
-      organizador_id,
+      patrocinador_id,
       estado
     });
 
@@ -108,6 +109,6 @@ eventosCtl.deleteEvento = async (req, res) => {
     console.error('Error al borrar el evento:', error.message);
     res.status(500).json({ error: 'Error al borrar el evento', details: error.message });
   }
-};
+};  
 
 module.exports = eventosCtl;

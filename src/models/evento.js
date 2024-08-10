@@ -19,16 +19,15 @@ const eventos = (sequelize, type) => {
         capacidad_personas: {
             type: type.INTEGER,
             allowNull: false,
-            comment: 'Capacidad de personas del evento'
+            comment: 'Capacidad de personas'
         },
         ubicacion: {
-            type: type.STRING(255),
-            allowNull: true,
+            type: type.STRING(100),
+            allowNull: false,
             comment: 'Ubicación del evento'
         },
         descripcion: {
             type: type.TEXT,
-            allowNull: true,
             comment: 'Descripción del evento'
         },
         tipo_evento: {
@@ -36,21 +35,22 @@ const eventos = (sequelize, type) => {
             allowNull: false,
             comment: 'Tipo de evento'
         },
-        organizador_id: {
-            type: type.TEXT,
+        patrocinador_id: {
+            type: type.INTEGER,
             allowNull: false,
-            comment: 'ID del organizador del evento'
+            comment: 'ID del patrocinador'
         },
         estado: {
-            type: type.ENUM('activo', 'inactivo', 'eliminado'),
+            type: type.ENUM('activo','inactivo', 'eliminado'),
             allowNull: false,
             defaultValue: 'activo',
             comment: 'Estado del evento'
-        }
+        },
     }, {
         timestamps: false,
         comment: 'Tabla de eventos'
     });
-};
-
-module.exports = eventos;
+  };
+  
+  module.exports = eventos;
+  
