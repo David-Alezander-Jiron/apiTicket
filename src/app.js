@@ -19,6 +19,8 @@ const winston = require('winston');
 const cors = require('cors');
 const eventosRouter = require('./router/eventos.router');
 const personalRouter = require('./router/personal.router');
+const ticketsRouter = require('./router/ticket.router')
+const participanteRouter = require('./router/participantes.router')
 
 const { Loader } = require('@googlemaps/js-api-loader')
 
@@ -192,6 +194,8 @@ app.use(require('./router/eventos.router'))
 app.use('/personal', personalRouter);
 app.use(require('./router/roles.router'));
 app.use(require('./router/patrocinadores.router'))
+app.use('/tickets', ticketsRouter);
+app.use(require('./router/participantes.router'))
 
 // Exportar la aplicación
 module.exports = app;
