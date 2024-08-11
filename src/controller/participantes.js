@@ -1,10 +1,11 @@
 const { participantes } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
 
+// Controlador de participantes
 const participantesCtl = {};
 
 // Crear un nuevo participante
-participantesCtl.crearParticipante = async (req, res) => {
-  const { nombre, apellido, correo, telefono, estado } = req.body;
+participantesCtl.crearParticipante = async (req, res, next) => {
+  const { nombre, correo, telefono, evento_id, estado } = req.body;
 
   try {
     // Verificar si el participante ya existe
@@ -22,9 +23,9 @@ participantesCtl.crearParticipante = async (req, res) => {
     // Crear un nuevo participante
     const newParticipante = await participantes.create({
       nombre,
-      apellido,
       correo,
       telefono,
+      evento_id,
       estado
     });
 
@@ -38,7 +39,7 @@ participantesCtl.crearParticipante = async (req, res) => {
 };
 
 // Obtener todos los participantes
-participantesCtl.obtenerParticipantes = async (req, res) => {
+participantesCtl.getParticipantes = async (req, res) => {
   try {
     // Filtrar para obtener solo los participantes que no están eliminados
     const participantesList = await participantes.findAll({
@@ -52,7 +53,7 @@ participantesCtl.obtenerParticipantes = async (req, res) => {
 };
 
 // Obtener un participante por ID
-participantesCtl.obtenerParticipantePorId = async (req, res) => {
+participantesCtl.getParticipanteById = async (req, res) => {
   try {
     const participante = await participantes.findByPk(req.params.id);
     if (participante && participante.estado === 'activo') {
@@ -67,7 +68,7 @@ participantesCtl.obtenerParticipantePorId = async (req, res) => {
 };
 
 // Actualizar un participante por ID
-participantesCtl.actualizarParticipante = async (req, res) => {
+participantesCtl.updateParticipante = async (req, res) => {
   const validStates = ['activo', 'inactivo', 'eliminado']; // Definir aquí el array de estados válidos
 
   try {
@@ -89,7 +90,7 @@ participantesCtl.actualizarParticipante = async (req, res) => {
 };
 
 // Borrar un participante por ID (Marcar como eliminado)
-participantesCtl.borrarParticipante = async (req, res) => {
+participantesCtl.deleteParticipante = async (req, res) => {
   try {
     const participante = await participantes.findByPk(req.params.id);
     if (participante && participante.estado === 'activo') {
@@ -105,6 +106,6 @@ participantesCtl.borrarParticipante = async (req, res) => {
     console.error('Error al borrar el participante:', error.message);
     res.status(500).json({ error: 'Error al borrar el participante', details: error.message });
   }
-};
+};  
 
 module.exports = participantesCtl;

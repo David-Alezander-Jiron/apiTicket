@@ -2,11 +2,19 @@ const express = require('express');
 const router = express.Router();
 const ticketsCtl = require('../controller/tickets');
 
-// Rutas para el manejo de tickets
-router.get('/', ticketsCtl.mostrar); // Mostrar todos los tickets
-router.post('/', ticketsCtl.mandar); // Crear un nuevo ticket
-router.get('/:id', ticketsCtl.obtenerPorId); // Obtener un ticket por ID
-router.delete('/:id', ticketsCtl.eliminar); // Eliminar un ticket por ID
-router.put('/:id', ticketsCtl.actualizar); // Actualizar un ticket por ID
+// Ruta para crear un nuevo ticket
+router.post('/tickets', ticketsCtl.crearTicket);
+
+// Ruta para obtener todos los tickets
+router.get('/tickets', ticketsCtl.getTickets);
+
+// Ruta para obtener un ticket por ID
+router.get('/tickets/:id', ticketsCtl.getTicketById);
+
+// Ruta para actualizar un ticket por ID
+router.put('/tickets/:id', ticketsCtl.updateTicket);
+
+// Ruta para borrar un ticket por ID (marcar como eliminado)
+router.delete('/tickets/:id', ticketsCtl.deleteTicket);
 
 module.exports = router;

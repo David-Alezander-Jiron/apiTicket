@@ -188,13 +188,13 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
 // Rutas - Definir tus rutas aquí
-app.use(require('./router/index.router'));
+app.use(require('./router/index.router')); 
 app.use(require('./router/usuarios.router'))
 app.use(require('./router/eventos.router'))
 app.use('/personal', personalRouter);
 app.use(require('./router/roles.router'));
 app.use(require('./router/patrocinadores.router'))
-app.use('/tickets', ticketsRouter);
+app.use(require('./router/ticket.router'))
 app.use(require('./router/participantes.router'))
 
 // Exportar la aplicación

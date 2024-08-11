@@ -1,90 +1,111 @@
-const ticketsCtl = {};
-const { tickets } = require('../Database/dataBase.orm');  // Asegúrate de que esta ruta sea correcta
+const { tickets } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
 
-// Mostrar todos los tickets
-ticketsCtl.mostrar = async (req, res) => {
+// Controlador de tickets
+const ticketsCtl = {};
+
+// Crear un nuevo ticket
+ticketsCtl.crearTicket = async (req, res, next) => {
+  const { evento_id, codigoQr, precio, estado, participantes_id } = req.body;
+
   try {
-    const allTickets = await tickets.findAll();  // Renombrado para evitar conflicto de nombres
-    res.status(200).json(allTickets);
+    // Verificar si el ticket ya existe
+    const existingTicket = await tickets.findOne({ where: { codigoQr } });
+    if (existingTicket) {
+      return res.status(400).json({ message: 'El ticket ya está registrado.' });
+    }
+
+    // Validar que el estado es un valor ENUM válido
+    const validStates = ['activo', 'inactivo', 'eliminado'];
+    if (!validStates.includes(estado)) {
+      return res.status(400).json({ message: 'El estado debe ser uno de los siguientes valores: activo, inactivo, eliminado.' });
+    }
+
+    // Crear un nuevo ticket
+    const newTicket = await tickets.create({
+      evento_id,
+      codigoQr,
+      precio,
+      estado,
+      participantes_id
+    });
+
+    // Responder con el nuevo ticket
+    res.status(201).json({ message: 'Ticket creado con éxito', ticket: newTicket });
+
   } catch (error) {
-    console.error("Error al obtener los tickets:", error);
-    res.status(500).send("Hubo un error al obtener los tickets");
+    console.error('Error en la creación del ticket:', error.message);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-// Crear un nuevo ticket
-ticketsCtl.mandar = async (req, res) => {
-  const { codigo, precio, estado, participante_id } = req.body;
-
-  if (!codigo || !precio || !participante_id) {
-    return res.status(400).send("Faltan datos requeridos: codigo, precio, o participante_id");
-  }
-
+// Obtener todos los tickets
+ticketsCtl.getTickets = async (req, res) => {
   try {
-    const nuevoTicket = await tickets.create({ codigo, precio, estado, participante_id });
-    res.status(200).json(nuevoTicket);
+    // Filtrar para obtener solo los tickets que no están eliminados
+    const ticketsList = await tickets.findAll({
+      where: { estado: 'activo' }
+    });
+    res.status(200).json(ticketsList);
   } catch (error) {
-    console.error("Error al crear el ticket:", error);
-    res.status(500).send("Hubo un error al crear el ticket");
+    console.error('Error al obtener los tickets:', error.message);
+    res.status(500).json({ error: 'Error al obtener los tickets', details: error.message });
   }
 };
 
 // Obtener un ticket por ID
-ticketsCtl.obtenerPorId = async (req, res) => {
-  const { id } = req.params;
-
+ticketsCtl.getTicketById = async (req, res) => {
   try {
-    const ticket = await tickets.findByPk(id);
-
-    if (!ticket) {
-      return res.status(404).json({ message: 'Ticket no encontrado' });
-    }
-    res.status(200).json(ticket);
-  } catch (error) {
-    console.error("Error al obtener el ticket:", error);
-    res.status(500).json({ message: 'Error interno del servidor: ' + error.message });
-  }
-};
-
-// Eliminar un ticket por ID
-ticketsCtl.eliminar = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await tickets.destroy({ where: { id } });
-
-    if (result) {
-      res.status(200).send("Ticket eliminado con éxito");
+    const ticket = await tickets.findByPk(req.params.id);
+    if (ticket && ticket.estado === 'activo') {
+      res.status(200).json(ticket);
     } else {
-      res.status(404).send("Ticket no encontrado");
+      res.status(404).json({ error: 'Ticket no encontrado' });
     }
   } catch (error) {
-    console.error("Error al eliminar el ticket:", error);
-    res.status(500).send("Hubo un error al eliminar el ticket");
+    console.error('Error al obtener el ticket:', error.message);
+    res.status(500).json({ error: 'Error al obtener el ticket', details: error.message });
   }
 };
 
 // Actualizar un ticket por ID
-ticketsCtl.actualizar = async (req, res) => {
-  const { id } = req.params;
-  const { codigo, precio, estado, participante_id } = req.body;
+ticketsCtl.updateTicket = async (req, res) => {
+  const validStates = ['activo', 'inactivo', 'eliminado']; // Definir aquí el array de estados válidos
 
   try {
-    const [updated] = await tickets.update(
-      { codigo, precio, estado, participante_id },
-      { where: { id } }
-    );
-
-    if (updated) {
-      const updatedTicket = await tickets.findByPk(id);
-      res.status(200).json(updatedTicket);
+    const ticket = await tickets.findByPk(req.params.id);
+    if (ticket) {
+      // Validar que el estado es un valor ENUM válido si está presente
+      if (req.body.estado !== undefined && !validStates.includes(req.body.estado)) {
+        return res.status(400).json({ message: `El estado debe ser uno de los siguientes valores: ${validStates.join(', ')}.` });
+      }
+      await ticket.update(req.body);
+      res.status(200).json(ticket);
     } else {
-      res.status(404).send("Ticket no encontrado");
+      res.status(404).json({ error: 'Ticket no encontrado' });
     }
   } catch (error) {
-    console.error("Error al actualizar el ticket:", error);
-    res.status(500).send("Hubo un error al actualizar el ticket");
+    console.error('Error al actualizar el ticket:', error.message);
+    res.status(500).json({ error: 'Error al actualizar el ticket', details: error.message });
   }
 };
+
+// Borrar un ticket por ID (Marcar como eliminado)
+ticketsCtl.deleteTicket = async (req, res) => {
+  try {
+    const ticket = await tickets.findByPk(req.params.id);
+    if (ticket && ticket.estado === 'activo') {
+      // Marcar el ticket como eliminado
+      await ticket.update({ estado: 'eliminado' });
+      res.status(204).send();
+    } else if (ticket && ticket.estado === 'eliminado') {
+      res.status(404).json({ error: 'Ticket ya ha sido eliminado' });
+    } else {
+      res.status(404).json({ error: 'Ticket no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al borrar el ticket:', error.message);
+    res.status(500).json({ error: 'Error al borrar el ticket', details: error.message });
+  }
+};  
 
 module.exports = ticketsCtl;

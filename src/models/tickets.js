@@ -1,37 +1,41 @@
 const tickets = (sequelize, type) => {
-  return sequelize.define('tickets', {
-      id: {
-          type: type.INTEGER,
-          autoIncrement: true,
-          primaryKey: true,
-          comment: 'ID del ticket'
-      },
-      codigo: {
-          type: type.STRING(50),
-          allowNull: false,
-          unique: true,
-          comment: 'Código del ticket'
-      },
-      precio: {
-          type: type.DECIMAL(10, 2),
-          allowNull: false,
-          comment: 'Precio del ticket'
-      },
-      estado: {
+    return sequelize.define('tickets', {
+        id: {
+            type: type.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+            comment: 'ID del ticket'
+        },
+        evento_id: {
+            type: type.INTEGER,
+            allowNull: false,
+            comment: 'ID del evento'
+        },
+        codigoQr: {
+            type: type.STRING(100),
+            allowNull: false,
+            comment: 'Código QR del ticket'
+        },
+        precio: {
+            type: type.FLOAT,
+            allowNull: false,
+            comment: 'Precio del ticket'
+        },
+        estado: {
             type: type.ENUM('activo','inactivo', 'eliminado'),
             allowNull: false,
             defaultValue: 'activo',
-            comment: 'Estado del usuario'
+            comment: 'Estado del ticket'
         },
-      participante_id: {
-          type: type.INTEGER,
-          allowNull: false,
-          comment: 'ID del participante asociado'
-      }
-  }, {
-      timestamps: false,
-      comment: 'Tabla de tickets'
-  });
+        participantes_id: {
+            type: type.INTEGER,
+            allowNull: false,
+            comment: 'ID del participante'
+        }
+    }, {
+        timestamps: false,
+        comment: 'Tabla de tickets'
+    });
 };
 
 module.exports = tickets;

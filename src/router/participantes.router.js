@@ -6,15 +6,15 @@ const participantesCtl = require('../controller/participantes');
 router.post('/participantes', participantesCtl.crearParticipante);
 
 // Ruta para obtener todos los participantes
-router.get('/participantes', participantesCtl.obtenerParticipantes);
+router.get('/participantes', participantesCtl.getParticipantes);
 
 // Ruta para obtener un participante por ID
-router.get('/participantes/:id', participantesCtl.obtenerParticipantePorId);
+router.get('/participantes/:id', participantesCtl.getParticipanteById);
 
 // Ruta para actualizar un participante por ID
-router.put('/participantes/:id', participantesCtl.actualizarParticipante);
+router.put('/participantes/:id', participantesCtl.updateParticipante);
 
 // Ruta para borrar un participante por ID (marcar como eliminado)
-router.delete('/participantes/:id', participantesCtl.borrarParticipante);
+router.delete('/participantes/:id', participantesCtl.deleteParticipante);
 
 module.exports = router;
