@@ -1,5 +1,5 @@
 const { tickets } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
-
+const { Op } = require('sequelize'); // Importa Op de sequelize
 // Controlador de tickets
 const ticketsCtl = {};
 
@@ -38,12 +38,13 @@ ticketsCtl.crearTicket = async (req, res, next) => {
   }
 };
 
+
 // Obtener todos los tickets
 ticketsCtl.getTickets = async (req, res) => {
   try {
     // Filtrar para obtener solo los tickets que no están eliminados
     const ticketsList = await tickets.findAll({
-      where: { estado: 'activo' }
+      where: { estado: { [Op.ne]: 'eliminado' } } // Op.ne significa "no igual"
     });
     res.status(200).json(ticketsList);
   } catch (error) {
@@ -56,7 +57,7 @@ ticketsCtl.getTickets = async (req, res) => {
 ticketsCtl.getTicketById = async (req, res) => {
   try {
     const ticket = await tickets.findByPk(req.params.id);
-    if (ticket && ticket.estado === 'activo') {
+    if (ticket && ticket.estado !== 'eliminado') { // Cambiado a "no igual a 'eliminado'"
       res.status(200).json(ticket);
     } else {
       res.status(404).json({ error: 'Ticket no encontrado' });
