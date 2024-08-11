@@ -1,84 +1,109 @@
-const participantesCtl = {};
-const { Participantes } = require('../Database/dataBase.sql');
+const { participantes } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
 
-// Mostrar todos los participantes
-participantesCtl.mostrar = async (req, res) => {
+const participantesCtl = {};
+
+// Crear un nuevo participante
+participantesCtl.crearParticipante = async (req, res) => {
+  const { nombre, apellido, correo, telefono, estado } = req.body;
+
   try {
-    const participantes = await Participantes.findAll();
-    res.status(200).json(participantes);
+    // Verificar si el participante ya existe
+    const existingParticipante = await participantes.findOne({ where: { correo } });
+    if (existingParticipante) {
+      return res.status(400).json({ message: 'El participante ya está registrado.' });
+    }
+
+    // Validar que el estado es un valor ENUM válido
+    const validStates = ['activo', 'inactivo', 'eliminado'];
+    if (!validStates.includes(estado)) {
+      return res.status(400).json({ message: 'El estado debe ser uno de los siguientes valores: activo, inactivo, eliminado.' });
+    }
+
+    // Crear un nuevo participante
+    const newParticipante = await participantes.create({
+      nombre,
+      apellido,
+      correo,
+      telefono,
+      estado
+    });
+
+    // Responder con el nuevo participante
+    res.status(201).json({ message: 'Participante creado con éxito', participante: newParticipante });
+
   } catch (error) {
-    console.error("Error al obtener los participantes:", error);
-    res.status(500).send("Hubo un error al obtener los participantes");
+    console.error('Error en la creación del participante:', error.message);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
-// Crear un nuevo participante
-participantesCtl.mandar = async (req, res) => {
-  const { nombre, email } = req.body;
-
+// Obtener todos los participantes
+participantesCtl.obtenerParticipantes = async (req, res) => {
   try {
-    await Participantes.create({ nombre, email });
-    res.status(200).send("Participante creado con éxito");
+    // Filtrar para obtener solo los participantes que no están eliminados
+    const participantesList = await participantes.findAll({
+      where: { estado: 'activo' }
+    });
+    res.status(200).json(participantesList);
   } catch (error) {
-    console.error("Error al crear el participante:", error);
-    res.status(500).send("Hubo un error al crear el participante");
+    console.error('Error al obtener los participantes:', error.message);
+    res.status(500).json({ error: 'Error al obtener los participantes', details: error.message });
   }
 };
 
 // Obtener un participante por ID
-participantesCtl.obtenerPorId = async (req, res) => {
-  const { id } = req.params;
-
+participantesCtl.obtenerParticipantePorId = async (req, res) => {
   try {
-    const participante = await Participantes.findByPk(id);
-
-    if (!participante) {
-      return res.status(404).json({ message: 'Participante no encontrado' });
-    }
-    res.status(200).json(participante);
-  } catch (error) {
-    console.error("Error al obtener el participante:", error);
-    res.status(500).json({ message: 'Error interno del servidor: ' + error.message });
-  }
-};
-
-// Eliminar un participante por ID
-participantesCtl.eliminar = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await Participantes.destroy({ where: { id } });
-
-    if (result) {
-      res.status(200).send("Participante eliminado con éxito");
+    const participante = await participantes.findByPk(req.params.id);
+    if (participante && participante.estado === 'activo') {
+      res.status(200).json(participante);
     } else {
-      res.status(404).send("Participante no encontrado");
+      res.status(404).json({ error: 'Participante no encontrado' });
     }
   } catch (error) {
-    console.error("Error al eliminar el participante:", error);
-    res.status(500).send("Hubo un error al eliminar el participante");
+    console.error('Error al obtener el participante:', error.message);
+    res.status(500).json({ error: 'Error al obtener el participante', details: error.message });
   }
 };
 
 // Actualizar un participante por ID
-participantesCtl.actualizar = async (req, res) => {
-  const { id } = req.params;
-  const { nombre, email } = req.body;
+participantesCtl.actualizarParticipante = async (req, res) => {
+  const validStates = ['activo', 'inactivo', 'eliminado']; // Definir aquí el array de estados válidos
 
   try {
-    const result = await Participantes.update(
-      { nombre, email },
-      { where: { id } }
-    );
-
-    if (result[0] > 0) {
-      res.status(200).send("Participante actualizado con éxito");
+    const participante = await participantes.findByPk(req.params.id);
+    if (participante) {
+      // Validar que el estado es un valor ENUM válido si está presente
+      if (req.body.estado !== undefined && !validStates.includes(req.body.estado)) {
+        return res.status(400).json({ message: `El estado debe ser uno de los siguientes valores: ${validStates.join(', ')}.` });
+      }
+      await participante.update(req.body);
+      res.status(200).json(participante);
     } else {
-      res.status(404).send("Participante no encontrado");
+      res.status(404).json({ error: 'Participante no encontrado' });
     }
   } catch (error) {
-    console.error("Error al actualizar el participante:", error);
-    res.status(500).send("Hubo un error al actualizar el participante");
+    console.error('Error al actualizar el participante:', error.message);
+    res.status(500).json({ error: 'Error al actualizar el participante', details: error.message });
+  }
+};
+
+// Borrar un participante por ID (Marcar como eliminado)
+participantesCtl.borrarParticipante = async (req, res) => {
+  try {
+    const participante = await participantes.findByPk(req.params.id);
+    if (participante && participante.estado === 'activo') {
+      // Marcar el participante como eliminado
+      await participante.update({ estado: 'eliminado' });
+      res.status(204).send();
+    } else if (participante && participante.estado === 'eliminado') {
+      res.status(404).json({ error: 'Participante ya ha sido eliminado' });
+    } else {
+      res.status(404).json({ error: 'Participante no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al borrar el participante:', error.message);
+    res.status(500).json({ error: 'Error al borrar el participante', details: error.message });
   }
 };
 
