@@ -1,11 +1,11 @@
 const ticketsCtl = {};
-const { Tickets } = require('../Database/dataBase.sql');
+const { tickets } = require('../Database/dataBase.orm');  // Asegúrate de que esta ruta sea correcta
 
 // Mostrar todos los tickets
 ticketsCtl.mostrar = async (req, res) => {
   try {
-    const tickets = await Tickets.findAll();
-    res.status(200).json(tickets);
+    const allTickets = await tickets.findAll();  // Renombrado para evitar conflicto de nombres
+    res.status(200).json(allTickets);
   } catch (error) {
     console.error("Error al obtener los tickets:", error);
     res.status(500).send("Hubo un error al obtener los tickets");
@@ -14,11 +14,15 @@ ticketsCtl.mostrar = async (req, res) => {
 
 // Crear un nuevo ticket
 ticketsCtl.mandar = async (req, res) => {
-  const { nombre, precio, evento_id } = req.body;
+  const { codigo, precio, estado, participante_id } = req.body;
+
+  if (!codigo || !precio || !participante_id) {
+    return res.status(400).send("Faltan datos requeridos: codigo, precio, o participante_id");
+  }
 
   try {
-    await Tickets.create({ nombre, precio, evento_id });
-    res.status(200).send("Ticket creado con éxito");
+    const nuevoTicket = await tickets.create({ codigo, precio, estado, participante_id });
+    res.status(200).json(nuevoTicket);
   } catch (error) {
     console.error("Error al crear el ticket:", error);
     res.status(500).send("Hubo un error al crear el ticket");
@@ -30,7 +34,7 @@ ticketsCtl.obtenerPorId = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const ticket = await Tickets.findByPk(id);
+    const ticket = await tickets.findByPk(id);
 
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket no encontrado' });
@@ -47,7 +51,7 @@ ticketsCtl.eliminar = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await Tickets.destroy({ where: { id } });
+    const result = await tickets.destroy({ where: { id } });
 
     if (result) {
       res.status(200).send("Ticket eliminado con éxito");
@@ -63,16 +67,17 @@ ticketsCtl.eliminar = async (req, res) => {
 // Actualizar un ticket por ID
 ticketsCtl.actualizar = async (req, res) => {
   const { id } = req.params;
-  const { nombre, precio, evento_id } = req.body;
+  const { codigo, precio, estado, participante_id } = req.body;
 
   try {
-    const result = await Tickets.update(
-      { nombre, precio, evento_id },
+    const [updated] = await tickets.update(
+      { codigo, precio, estado, participante_id },
       { where: { id } }
     );
 
-    if (result[0] > 0) {
-      res.status(200).send("Ticket actualizado con éxito");
+    if (updated) {
+      const updatedTicket = await tickets.findByPk(id);
+      res.status(200).json(updatedTicket);
     } else {
       res.status(404).send("Ticket no encontrado");
     }
