@@ -5,11 +5,12 @@ const db = require('../Database/dataBase.orm'); // Ajusta la ruta a tu archivo O
 
 const Usuario = db.usuarios; // Asegúrate de que 'usuario' se esté importando correctamente
 
+// Inicio de sesión de usuarios
 passport.use(
     'local.signin',
     new LocalStrategy(
         {
-            usernameField: 'correo', // Cambiado de 'correo_electronico' a 'correo'
+            usernameField: 'correo',
             passwordField: 'contrasena',
             passReqToCallback: true,
         },
@@ -18,6 +19,11 @@ passport.use(
                 const usuario = await Usuario.findOne({ where: { correo } });
                 if (!usuario) {
                     return done(null, false, req.flash('message', 'El correo electrónico no existe.'));
+                }
+
+                // Verificar el estado del usuario
+                if (usuario.estado !== 'activo') {
+                    return done(null, false, req.flash('message', 'Este usuario no está activo.'));
                 }
 
                 const validPassword = await bcrypt.compare(contrasena, usuario.contrasena);
@@ -32,6 +38,9 @@ passport.use(
         }
     )
 );
+
+// El resto de tu código...
+
 
 passport.use(
     'local.signup',

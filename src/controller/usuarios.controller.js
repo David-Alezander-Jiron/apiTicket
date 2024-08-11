@@ -1,5 +1,6 @@
 const { usuarios } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize'); // Importa Op de sequelize
 
 // Controlador de usuarios
 const usersCtl = {};
@@ -48,7 +49,7 @@ usersCtl.getUsuarios = async (req, res) => {
     try {
         // Filtrar para obtener solo los usuarios que no están eliminados
         const usuariosList = await usuarios.findAll({
-            where: { estado: 'activo' }
+            where: { estado: { [Op.ne]: 'eliminado' } } // Op.ne significa "no igual"
         });
         res.status(200).json(usuariosList);
     } catch (error) {
@@ -61,7 +62,7 @@ usersCtl.getUsuarios = async (req, res) => {
 usersCtl.getUsuarioById = async (req, res) => {
     try {
         const user = await usuarios.findByPk(req.params.id);
-        if (user && user.estado === 'activo') {
+        if (user && user.estado !== 'eliminado') { // Cambiado a "no igual a 'eliminado'"
             res.status(200).json(user);
         } else {
             res.status(404).json({ error: 'Usuario no encontrado' });
@@ -71,6 +72,9 @@ usersCtl.getUsuarioById = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener el usuario', details: error.message });
     }
 };
+
+// El resto de tu código...
+
 
 // Actualizar un usuario por ID
 usersCtl.updateUsuario = async (req, res) => {
