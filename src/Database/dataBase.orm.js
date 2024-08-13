@@ -70,7 +70,7 @@ const ubi_personal = ubiPersonalModel(sequelize, DataTypes);
 const evento_locacion = eventoLocacionModel(sequelize, DataTypes);
 const evento_participantes = eventoParticipantesModel(sequelize, DataTypes);
 const evento_patrocinadores = eventoPatrocinadoresModel(sequelize, DataTypes);
-const evento_personal = eventoPersonalModel(sequelize, DataTypes);
+const eventos_personals = eventoPersonalModel(sequelize, DataTypes);
 const evento_tickets = eventoTicketsModel(sequelize, DataTypes);
 const locaciones = locacionModel(sequelize, DataTypes);
 const servicios = servicioModel(sequelize, DataTypes);
@@ -87,8 +87,6 @@ eventos.belongsToMany(participantes, { through: evento_participantes, foreignKey
 patrocinadores.belongsToMany(eventos, { through: evento_patrocinadores, foreignKey: 'patrocinador_id' });
 eventos.belongsToMany(patrocinadores, { through: evento_patrocinadores, foreignKey: 'evento_id' });
 
-personals.belongsToMany(eventos, { through: evento_personal, foreignKey: 'personal_id' });
-eventos.belongsToMany(personals, { through: evento_personal, foreignKey: 'evento_id' });
 
 tickets.belongsToMany(eventos, { through: evento_tickets, foreignKey: 'ticket_id' });
 eventos.belongsToMany(tickets, { through: evento_tickets, foreignKey: 'evento_id' });
@@ -107,9 +105,6 @@ evento_participantes.belongsTo(eventos, { foreignKey: 'evento_id' });
 
 eventos.hasMany(evento_patrocinadores, { foreignKey: 'evento_id' });
 evento_patrocinadores.belongsTo(eventos, { foreignKey: 'evento_id' });
-
-eventos.hasMany(evento_personal, { foreignKey: 'evento_id' });
-evento_personal.belongsTo(eventos, { foreignKey: 'evento_id' });
 
 eventos.hasMany(evento_tickets, { foreignKey: 'evento_id' });
 evento_tickets.belongsTo(eventos, { foreignKey: 'evento_id' });
@@ -135,7 +130,7 @@ module.exports = {
     evento_locacion,
     evento_participantes,
     evento_patrocinadores,
-    evento_personal,
+    eventos_personals,
     evento_tickets,
     locaciones,
     eventos

@@ -1,85 +1,111 @@
-const eventoPersonalCtl = {};
-const { EventoPersonal } = require('../Database/dataBase.sql');
+const { eventos_personals } = require('../Database/dataBase.orm'); // Asegúrate de que la ruta sea correcta
+const { Op } = require('sequelize'); // Importa Op de sequelize
 
-// Mostrar todo el personal del evento
-eventoPersonalCtl.mostrar = async (req, res) => {
-  try {
-    const personal = await EventoPersonal.findAll();
-    res.status(200).json(personal);
-  } catch (error) {
-    console.error("Error al obtener el personal del evento:", error);
-    res.status(500).send("Hubo un error al obtener el personal del evento");
-  }
-};
+// Controlador de eventos_personals
+const eventosPersonalsCtl = {};
 
-// Crear un nuevo personal del evento
-eventoPersonalCtl.mandar = async (req, res) => {
-  const { evento_id, personal_id } = req.body;
+// Crear una nueva relación evento-personal
+eventosPersonalsCtl.crearEventoPersonal = async (req, res, next) => {
+    const { evento_id, personal_id, estado } = req.body;
 
-  try {
-    await EventoPersonal.create({ evento_id, personal_id });
-    res.status(200).send("Personal del evento creado con éxito");
-  } catch (error) {
-    console.error("Error al crear el personal del evento:", error);
-    res.status(500).send("Hubo un error al crear el personal del evento");
-  }
-};
+    try {
+        // Verificar si la relación evento-personal ya existe
+        const existingEventoPersonal = await eventos_personals.findOne({ where: { evento_id, personal_id } });
+        if (existingEventoPersonal) {
+            return res.status(400).json({ message: 'La relación evento-personal ya está registrada.' });
+        }
 
-// Obtener un personal del evento por ID
-eventoPersonalCtl.obtenerPorId = async (req, res) => {
-  const { id } = req.params;
+        // Validar que el estado es un valor ENUM válido
+        const validStates = ['activo', 'inactivo', 'eliminado'];
+        if (!validStates.includes(estado)) {
+            return res.status(400).json({ message: 'El estado debe ser uno de los siguientes valores: activo, inactivo, eliminado.' });
+        }
 
-  try {
-    const personal = await EventoPersonal.findByPk(id);
+        // Crear una nueva relación evento-personal
+        const newEventoPersonal = await eventos_personals.create({
+            evento_id,
+            personal_id,
+            estado
+        });
 
-    if (!personal) {
-      return res.status(404).json({ message: 'Personal del evento no encontrado' });
+        // Responder con la nueva relación evento-personal
+        res.status(201).json({ message: 'Registro exitoso', eventoPersonal: newEventoPersonal });
+
+    } catch (error) {
+        console.error('Error en el registro de la relación evento-personal:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-    res.status(200).json(personal);
-  } catch (error) {
-    console.error("Error al obtener el personal del evento:", error);
-    res.status(500).json({ message: 'Error interno del servidor: ' + error.message });
-  }
 };
 
-// Eliminar un personal del evento por ID
-eventoPersonalCtl.eliminar = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await EventoPersonal.destroy({ where: { id } });
-
-    if (result) {
-      res.status(200).send("Personal del evento eliminado con éxito");
-    } else {
-      res.status(404).send("Personal del evento no encontrado");
+// Obtener todas las relaciones evento-personal
+eventosPersonalsCtl.getEventosPersonals = async (req, res) => {
+    try {
+        // Filtrar para obtener solo las relaciones evento-personal que no están eliminadas
+        const eventosPersonalsList = await eventos_personals.findAll({
+            where: { estado: { [Op.ne]: 'eliminado' } } // Op.ne significa "no igual"
+        });
+        res.status(200).json(eventosPersonalsList);
+    } catch (error) {
+        console.error('Error al obtener las relaciones evento-personal:', error.message);
+        res.status(500).json({ error: 'Error al obtener las relaciones evento-personal', details: error.message });
     }
-  } catch (error) {
-    console.error("Error al eliminar el personal del evento:", error);
-    res.status(500).send("Hubo un error al eliminar el personal del evento");
-  }
 };
 
-// Actualizar un personal del evento por ID
-eventoPersonalCtl.actualizar = async (req, res) => {
-  const { id } = req.params;
-  const { evento_id, personal_id } = req.body;
-
-  try {
-    const result = await EventoPersonal.update(
-      { evento_id, personal_id },
-      { where: { id } }
-    );
-
-    if (result[0] > 0) {
-      res.status(200).send("Personal del evento actualizado con éxito");
-    } else {
-      res.status(404).send("Personal del evento no encontrado");
+// Obtener una relación evento-personal por ID
+eventosPersonalsCtl.getEventoPersonalById = async (req, res) => {
+    try {
+        const eventoPersonal = await eventos_personals.findByPk(req.params.id);
+        if (eventoPersonal && eventoPersonal.estado !== 'eliminado') { // Cambiado a "no igual a 'eliminado'"
+            res.status(200).json(eventoPersonal);
+        } else {
+            res.status(404).json({ error: 'Relación evento-personal no encontrada' });
+        }
+    } catch (error) {
+        console.error('Error al obtener la relación evento-personal:', error.message);
+        res.status(500).json({ error: 'Error al obtener la relación evento-personal', details: error.message });
     }
-  } catch (error) {
-    console.error("Error al actualizar el personal del evento:", error);
-    res.status(500).send("Hubo un error al actualizar el personal del evento");
-  }
 };
 
-module.exports = eventoPersonalCtl;
+// Actualizar una relación evento-personal por ID
+eventosPersonalsCtl.updateEventoPersonal = async (req, res) => {
+    const validStates = ['activo', 'inactivo', 'eliminado']; // Definir aquí el array de estados válidos
+
+    try {
+        const eventoPersonal = await eventos_personals.findByPk(req.params.id);
+        if (eventoPersonal) {
+            // Validar que el estado es un valor ENUM válido si está presente
+            if (req.body.estado !== undefined && !validStates.includes(req.body.estado)) {
+                return res.status(400).json({ message: `El estado debe ser uno de los siguientes valores: ${validStates.join(', ')}.` });
+            }
+            await eventoPersonal.update(req.body);
+            res.status(200).json(eventoPersonal);
+        } else {
+            res.status(404).json({ error: 'Relación evento-personal no encontrada' });
+        }
+    } catch (error) {
+        console.error('Error al actualizar la relación evento-personal:', error.message);
+        res.status(500).json({ error: 'Error al actualizar la relación evento-personal', details: error.message });
+    }
+};
+
+// Borrar una relación evento-personal por ID (Marcar como eliminado)
+eventosPersonalsCtl.deleteEventoPersonal = async (req, res) => {
+    try {
+        const eventoPersonal = await eventos_personals.findByPk(req.params.id);
+        if (eventoPersonal && eventoPersonal.estado === 'activo') {
+            // Marcar la relación evento-personal como eliminada
+            await eventoPersonal.update({ estado: 'eliminado' });
+            res.status(204).send();
+        } else if (eventoPersonal && eventoPersonal.estado === 'eliminado') {
+            res.status(404).json({ error: 'Relación evento-personal ya ha sido eliminada' });
+        } else {
+            res.status(404).json({ error: 'Relación evento-personal no encontrada' });
+        }
+    } catch (error) {
+        console.error('Error al borrar la relación evento-personal:', error.message);
+        res.status(500).json({ error: 'Error al borrar la relación evento-personal', details: error.message });
+    }
+};
+
+// Exportar el controlador
+module.exports = eventosPersonalsCtl;

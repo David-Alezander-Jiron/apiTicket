@@ -1,20 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const eventoPersonalCtl = require('../controller/eventoPersonal');
+const eventosPersonalsCtl = require('../controller/eventoPersonal');
 
 // Mostrar todo el personal del evento
-router.get('/', eventoPersonalCtl.mostrar);
+router.get('/eventos-personals', eventosPersonalsCtl.getEventosPersonals);
 
 // Crear un nuevo personal del evento
-router.post('/', eventoPersonalCtl.mandar);
+router.post('/eventos-personals', eventosPersonalsCtl.crearEventoPersonal);
 
 // Obtener un personal del evento por ID
-router.get('/:id', eventoPersonalCtl.obtenerPorId);
+router.get('/eventos-personals/:id', eventosPersonalsCtl.getEventoPersonalById);
 
 // Eliminar un personal del evento por ID
-router.delete('/:id', eventoPersonalCtl.eliminar);
+router.delete('/eventos-personals/:id', eventosPersonalsCtl.deleteEventoPersonal);
 
 // Actualizar un personal del evento por ID
-router.put('/:id', eventoPersonalCtl.actualizar);
+router.put('/eventos-personals/:id', eventosPersonalsCtl.updateEventoPersonal);
 
 module.exports = router;

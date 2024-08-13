@@ -196,6 +196,7 @@ app.use(require('./router/roles.router'));
 app.use(require('./router/patrocinadores.router'))
 app.use(require('./router/ticket.router'))
 app.use(require('./router/participantes.router'))
+app.use(require('./router/eventoPersonal.router'))
 
 // Exportar la aplicación
 module.exports = app;
