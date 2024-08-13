@@ -37,7 +37,7 @@ indexCtl.registro = (req, res, next) => {
             return next(err);
         }
         if (!usuario) {
-            return res.status(400).json({ message: info ? info.message : 'Error desconocido' });
+            return res.status(400).json({ message: info ? info.message : 'EL correo ya esta registrado' });
         }
         req.logIn(usuario, (err) => {
             if (err) {
